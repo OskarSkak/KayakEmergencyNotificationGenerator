@@ -1,20 +1,8 @@
+import Axios from 'axios';
 import React from 'react';
 import { SafeAreaView, View, FlatList, StyleSheet, Text, StatusBar, Pressable } from 'react-native';
 
-const DATA = [
-    {
-        id: '1',
-        title: 'GyroScope',
-        route: 'gyro',
 
-    },
-    {
-        id: '2',
-        title: 'Gps',
-        route: 'gps',
-        
-    }
-];
 const Item = ({ title, onPress , style }) => (
     <Pressable onPress={onPress} style={[styles.item , style]} >
     <View style={styles.item}>
@@ -24,6 +12,14 @@ const Item = ({ title, onPress , style }) => (
   );
   
   const SensorHomeScreen = ({navigation}) => {
+
+    const [data , setData] = React.useState([]);
+
+    React.useEffect(() => {
+      Axios.get('http://localhost:5000').then((data) => setData(data.data)).catch(err => console.log(err))
+      
+    }, []);
+
       
     const renderItem = ({ item }) => {
         return (
@@ -37,7 +33,7 @@ const Item = ({ title, onPress , style }) => (
     return (
       <SafeAreaView style={styles.container}>
         <FlatList
-          data={DATA}
+          data={data}
           renderItem={renderItem}
           keyExtractor={item => item.id}
         />
