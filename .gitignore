@@ -339,3 +339,5 @@ node_modules/**/*
 .expo/*
 npm-debug.*
 .vscode
+kayakinsights.api/.idea
+kayakinsights.api/kayakinsights.api/obj

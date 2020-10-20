@@ -1,8 +1,19 @@
-version: '3.7'
+version: "3.7"
 
-services: 
-    api:
-        build:
-            context: ./api
-        ports: 
-            - 5000:5000
+services:
+  processervice:
+    build:
+      context: ./api
+    ports:
+      - 5000:5000
+  api:
+    build:
+      context: ./kayakinsights.api/kayakinsights.api
+    ports:
+      - 5011:80
+  mongo:
+    container_name: mongoapi
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
