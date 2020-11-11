@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using kayakinsights.api.Models;
-using kayakinsights.api.services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace kayakinsights.api.Controllers
@@ -12,7 +11,7 @@ namespace kayakinsights.api.Controllers
     {
         
         [HttpPost]
-        public async Task<Accelerometer> AddAccelerometerData([FromBody] AccelerometerModel model)
+        public async Task<Accelerometer> AddAccelerometerData([FromBody] Accelerometer model)
         {
             return null;
         }
