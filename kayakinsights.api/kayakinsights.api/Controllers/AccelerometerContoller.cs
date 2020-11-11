@@ -7,7 +7,7 @@ namespace kayakinsights.api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class AccelerometerContoller : ControllerBase
+    public class AccelerometerController : ControllerBase
     {
         
         [HttpPost]
