@@ -5,7 +5,7 @@ const localhost = Platform.OS === "ios" ? "localhost:8080" : "10.0.2.2:8080";
 
 const ENV = {
   dev: {
-    apiUrl: "http://572e9e4d5279.ngrok.io",
+    apiUrl: "http://0f4f6143ef99.ngrok.io",
     amplitudeApiKey: null,
   },
 };

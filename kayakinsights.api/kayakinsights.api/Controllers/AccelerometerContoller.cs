@@ -20,19 +20,13 @@ namespace kayakinsights.api.Controllers
         [HttpGet]
         public async Task<AccelerometerModel> GetAccelerometerData(Guid id)
         {
-           var result =  await _service.GetById(id);
-           return result;
-
-
+            return null;
         }
         
         [HttpPost]
         public async Task<AccelerometerModel> AddAccelerometerData(AccelerometerModel model)
         {
-            var result = await _service.AddAccelerometerData(model);
-            return result;
-
-
+            return null;
         }
         
     }
