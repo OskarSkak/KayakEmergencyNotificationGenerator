@@ -10,21 +10,9 @@ namespace kayakinsights.api.Controllers
     [Route("[controller]")]
     public class AccelerometerContoller : ControllerBase
     {
-        private IAccelerometerService _service { get; set; }
-        
-        public AccelerometerContoller(IAccelerometerService service)
-        {
-            _service = service;
-        }
-
-        [HttpGet]
-        public async Task<AccelerometerModel> GetAccelerometerData(Guid id)
-        {
-            return null;
-        }
         
         [HttpPost]
-        public async Task<AccelerometerModel> AddAccelerometerData(AccelerometerModel model)
+        public async Task<Accelerometer> AddAccelerometerData([FromBody] AccelerometerModel model)
         {
             return null;
         }
