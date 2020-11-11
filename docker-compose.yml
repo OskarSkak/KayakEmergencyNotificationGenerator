@@ -17,3 +17,12 @@ services:
     restart: always
     ports:
       - "27017:27017"
+  ngrok:
+    image: shkoliar/ngrok:latest
+    ports:
+      - 4551:4551
+    links:
+      - processervice
+    environment:
+      - DOMAIN=processervice
+      - PORT=5000

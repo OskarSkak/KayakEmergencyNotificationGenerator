@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Gyroscope } from 'expo-sensors';
+import React, { useState, useEffect } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Gyroscope } from "expo-sensors";
 
-const  GyroScopeScreen = () => {
+const GyroScopeScreen = ({ callback, interval }) => {
   const [data, setData] = useState({});
+  let _subscription = null;
 
   useEffect(() => {
     _toggle();
@@ -16,7 +17,7 @@ const  GyroScopeScreen = () => {
   }, []);
 
   const _toggle = () => {
-    if (this._subscription) {
+    if (_subscription) {
       _unsubscribe();
     } else {
       _subscribe();
@@ -32,45 +33,28 @@ const  GyroScopeScreen = () => {
   };
 
   const _subscribe = () => {
-    this._subscription = Gyroscope.addListener(gyroscopeData => {
+    Gyroscope.setUpdateInterval(interval);
+    _subscription = Gyroscope.addListener((gyroscopeData) => {
       setData(gyroscopeData);
+      callback(gyroscopeData);
     });
   };
 
   const _unsubscribe = () => {
-    this._subscription && this._subscription.remove();
-    this._subscription = null;
+    _subscription && _subscription.remove();
+    _subscription = null;
   };
 
   let { x, y, z } = data;
-  return (
-    <View >
-      <Text >Gyroscope:</Text>
-      <Text >
-        x: {round(x)} y: {round(y)} z: {round(z)}
-      </Text>
-      <View >
-        <TouchableOpacity onPress={_toggle} >
-          <Text>Toggle</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={_slow} >
-          <Text>Slow</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={_fast} >
-          <Text>Fast</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
-}
+  return null;
+};
 
 function round(n) {
-    if (!n) {
-      return 0;
-    }
-  
-    return Math.floor(n * 100) / 100;
+  if (!n) {
+    return 0;
   }
 
+  return Math.floor(n * 100) / 100;
+}
 
-  export default GyroScopeScreen;
+export default GyroScopeScreen;
