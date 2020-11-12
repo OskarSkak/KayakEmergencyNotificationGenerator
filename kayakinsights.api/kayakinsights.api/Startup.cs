@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using kayakinsights.api.config;
 using kayakinsights.api.context;
+using kayakinsights.api.Hub;
 using kayakinsights.api.repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -40,10 +41,12 @@ namespace kayakinsights.api
             services.AddSingleton<ITodoRepository>(repo);
             */
 
+            services.AddSignalR();
             services.AddScoped<GPSService>();
             services.AddScoped<BatchService>();
             services.AddScoped<GyroscopeService>();
             services.AddScoped<AccelerometerServicecs>();
+            services.AddScoped<AnalysisService>();
 
             services.AddControllers();
             services.AddSwaggerGen(swagger =>
@@ -71,7 +74,10 @@ namespace kayakinsights.api
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseEndpoints(endpoints => { 
+                endpoints.MapControllers();
+                endpoints.MapHub<SignalRHub>("/apiHub");
+            });
         }
     }
 }

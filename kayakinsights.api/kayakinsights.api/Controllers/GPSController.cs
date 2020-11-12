@@ -25,18 +25,18 @@ namespace kayakinsights.api.Controllers
             return await _service.Get();
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] GPS dto)
+        {
+            var result = await _service.Create(dto);
+            return Ok(result);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetSingle(string id)
         {
             var result = await _service.Get(id);
             if (result == null) return NotFound();
-            return Ok(result);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] GPS dto)
-        {
-            var result = await _service.Create(dto);
             return Ok(result);
         }
 
