@@ -5,46 +5,74 @@ import {
   gyroscope,
   setUpdateIntervalForType,
   SensorTypes,
+  L,
 } from 'react-native-sensors';
+const axios = require('axios').default;
 
 const GyroScopeScreen = ({callback, interval}) => {
   const [gpsData, setGpsData] = useState({});
   const [gyroData, setGyroData] = useState({});
   const [accData, setAccData] = useState({});
+  const mountedRef = React.useRef(true);
 
-  let subscription = null;
+  let subscriptionGyro = null;
+  let subscriptionAcc = null;
   setUpdateIntervalForType(SensorTypes.gyroscope, interval);
+  setUpdateIntervalForType(SensorTypes.accelerometer, interval);
 
   useEffect(() => {
     _toggle();
-  }, []);
-
-  useEffect(() => {
     return () => {
-      _unsubscribe();
+      mountedRef.current = false;
     };
   }, []);
 
   const _toggle = () => {
-    if (subscription) {
+    if (subscriptionGyro && subscriptionAcc) {
       _unsubscribe();
     } else {
-      _subscribe();
+      _subscribeGyro();
+      _subscribeAcc();
     }
   };
 
-  const _subscribe = () => {
-    subscription = gyroscope.subscribe((result) => {
-      setGpsData(result);
+  const _subscribeAcc = () => {
+    subscriptionAcc = accelerometer.subscribe((data) => {
+      if (!mountedRef.current) return null;
+      setGpsData(data);
+      let date = new Date(data.timestamp);
+      data.timestamp = date;
+      axios
+        .post('http://4c29fe2fe353.ngrok.io/accelerometer', data)
+        .then((res) => {
+          console.log('Acc' + res.status);
+        })
+        .catch((err) => console.log(err));
+    });
+  };
+
+  const _subscribeGyro = () => {
+    subscriptionGyro = gyroscope.subscribe((data) => {
+      if (!mountedRef.current) return null;
+      setGpsData(data);
+      let date = new Date(data.timestamp);
+      data.timestamp = date;
+      axios
+        .post('http://4c29fe2fe353.ngrok.io/gyroscope', data)
+        .then((res) => {
+          console.log('Gyro' + res.status);
+        })
+        .catch((err) => console.log(err));
     });
   };
 
   const _unsubscribe = () => {
-    subscription && subscription.remove();
-    subscription = null;
+    subscriptionGyro && subscriptionGyro.remove();
+    subscriptionGyro = null;
+    subscriptionAcc && subscriptionAcc.remove();
+    subscriptionAcc = null;
   };
 
-  let {x, y, z} = data;
   return null;
 };
 
