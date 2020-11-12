@@ -1,4 +1,5 @@
 ﻿using kayakinsights.api.Models;
+using kayakinsights.api.repositories;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -11,10 +12,24 @@ namespace kayakinsights.api.Controllers
     [Route("[controller]")]
     public class GyroscopeController : ControllerBase
     {
-        [HttpPost]
-        public async Task<Gyroscope> AddAccelerometerData([FromBody] Gyroscope model)
+        private readonly GyroscopeService _service;
+
+        public GyroscopeController(GyroscopeService gpsService)
         {
-            return null;
+            this._service = gpsService;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<List<Gyroscope>>> Get()
+        {
+            return await _service.Get();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] Gyroscope dto)
+        {
+            var result = await _service.Create(dto);
+            return Ok(result);
         }
     }
 }

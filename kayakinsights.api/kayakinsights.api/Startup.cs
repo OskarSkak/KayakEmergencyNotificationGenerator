@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using kayakinsights.api.config;
+using kayakinsights.api.context;
+using kayakinsights.api.repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -26,6 +29,22 @@ namespace kayakinsights.api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            /*
+            var config = new ServerConfig();
+            Configuration.Bind(config);
+
+            var todoContext = new TodoContext(config.MongoDB);
+
+            var repo = new TodoRepository(todoContext);
+
+            services.AddSingleton<ITodoRepository>(repo);
+            */
+
+            services.AddScoped<GPSService>();
+            services.AddScoped<BatchService>();
+            services.AddScoped<GyroscopeService>();
+            services.AddScoped<AccelerometerServicecs>();
+
             services.AddControllers();
             services.AddSwaggerGen(swagger =>
             {
