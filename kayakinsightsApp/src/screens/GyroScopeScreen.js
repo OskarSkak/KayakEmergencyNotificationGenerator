@@ -8,7 +8,9 @@ import {
 } from 'react-native-sensors';
 
 const GyroScopeScreen = ({callback, interval}) => {
-  const [data, setData] = useState({});
+  const [gpsData, setGpsData] = useState({});
+  const [gyroData, setGyroData] = useState({});
+  const [accData, setAccData] = useState({});
 
   let subscription = null;
   setUpdateIntervalForType(SensorTypes.gyroscope, interval);
@@ -33,8 +35,7 @@ const GyroScopeScreen = ({callback, interval}) => {
 
   const _subscribe = () => {
     subscription = gyroscope.subscribe((result) => {
-      setData(result);
-      callback(result);
+      setGpsData(result);
     });
   };
 
