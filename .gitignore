@@ -341,3 +341,7 @@ npm-debug.*
 .vscode
 kayakinsights.api/.idea
 kayakinsights.api/kayakinsights.api/obj
+kayakinsights/.expo/web/cache/development/babel-loader
+kayakinsights.api/.vs
+AnalyzeFallPrototype/.vs
+AnalyzeFallPrototype/obj
