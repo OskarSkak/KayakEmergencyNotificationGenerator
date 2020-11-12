@@ -46,6 +46,7 @@ namespace kayakinsights.api
             services.AddScoped<BatchService>();
             services.AddScoped<GyroscopeService>();
             services.AddScoped<AccelerometerServicecs>();
+            services.AddScoped<AnalysisService>();
 
             services.AddControllers();
             services.AddSwaggerGen(swagger =>
