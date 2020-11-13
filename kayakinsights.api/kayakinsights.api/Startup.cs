@@ -15,6 +15,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Hangfire;
+using Hangfire.MemoryStorage;
+using Hangfire.SqlServer;
 
 namespace kayakinsights.api
 {
@@ -47,6 +50,10 @@ namespace kayakinsights.api
             services.AddScoped<GyroscopeService>();
             services.AddScoped<AccelerometerServicecs>();
             services.AddScoped<AnalysisService>();
+            services.AddHangfire(config =>
+            {
+                config.UseMemoryStorage();
+            });
 
             services.AddControllers();
             services.AddSwaggerGen(swagger =>
@@ -64,7 +71,8 @@ namespace kayakinsights.api
             }
 
             app.UseSwagger();
-            
+            app.UseHangfireServer();
+
             //app.UseHttpsRedirection();
             app.UseSwaggerUI(c =>
             {
