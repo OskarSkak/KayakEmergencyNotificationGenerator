@@ -13,7 +13,8 @@ import SmsAndroid from 'react-native-get-sms-android';
 import AsyncStorage from '@react-native-community/async-storage';
 import GpsSensorScreen from './GpsSensorScreen';
 import signalr from 'react-native-signalr';
-
+import {HubConnectionBuilder, LogLevel} from '@microsoft/signalr';
+const hub_endpoint = 'http://3d073f890d09.ngrok.io/apiHub';
 const image = {
   uri:
     'https://images.unsplash.com/photo-1551679630-2eed87aefae6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80',
@@ -28,43 +29,62 @@ const HomeScreen = () => {
   const initialSeconds = 30;
   const [seconds, setSeconds] = React.useState(initialSeconds);
 
+  const [user, onChangeUserText] = React.useState('');
+  const [message, onChangeMessageText] = React.useState('');
+  const [conn, setConn] = React.useState(null);
+  const [messageLog, setMessageLog] = React.useState([]);
+  const [connectionState, setConnectedStateText] = React.useState('');
+  const [isConnected, setConnected] = React.useState(false);
+
   let myInterval = null;
   const displayText = isTracking ? 'Stop Tracking' : 'Start Tracking';
 
   React.useEffect(() => {
-    const connection = signalr.hubConnection('' + '/apihub');
-    connection.logging = true;
-    const proxy = connection.createHubProxy('SignalRHub');
-    //receives broadcast messages from a hub function, called "helloApp"
-    proxy.on('TEST', (argOne, argTwo, argThree, argFour) => {
-      console.log('message-from-server', argOne, argTwo, argThree, argFour);
-      //Here I could response by calling something else on the server...
-    });
+    console.log('effect');
 
-    //connection-handling
-    connection.connectionSlow(() => {
-      console.log(
-        'We are currently experiencing difficulties with the connection.',
+    // Setting the log level to Debug will generate tons more diagnostic
+    // messages in the console log which can help give a deeper understanding
+    // of how SignalR works and what it's doing under the covers
+    const connection = new HubConnectionBuilder()
+      .withUrl(hub_endpoint)
+      .configureLogging(LogLevel.Debug)
+      .build();
+
+    setConnectedStateText(`Trying to connect to ${hub_endpoint}`);
+
+    // Try to start the connection
+    connection
+      .start()
+      .then(() => {
+        setConnectedStateText(`Connected to ${hub_endpoint}`);
+        setConnected(true);
+      })
+      .catch((err) =>
+        console.log(`Error starting the connection: ${err.toString()}`),
       );
+
+    // Handle connection closing
+    connection.onclose(async () => {
+      setConnectedStateText(`Disconnected from ${hub_endpoint}`);
+      setConnected(false);
     });
 
-    connection.error((error) => {
-      const errorMessage = error.message;
-      let detailedError = '';
-      if (error.source && error.source._response) {
-        detailedError = error.source._response;
+    // Incoming messages will grow the message log array
+    connection.on('hub', (e, a) => {
+      if (e === true) {
+        // The persona has falled!!!
+        onChangeIsTracking(false);
+        OnChangeIsFalling(true);
+      } else {
+        console.log('Not falled! ');
       }
-      if (
-        detailedError ===
-        'An SSL error has occurred and a secure connection to the server cannot be made.'
-      ) {
-        console.log(
-          'When using react-native-signalr on ios with http remember to enable http in App Transport Security https://github.com/olofd/react-native-signalr/issues/14',
-        );
-      }
-      console.debug('SignalR error: ' + errorMessage, detailedError);
     });
-  });
+
+    // This isn't very elegant but I'm still learning about scope and state in React Native
+    // This seemed like the logical way to make the connection object available to the 'Reconnect' button
+    // but I think the connection object/handler should be encapsulated into it's own component
+    setConn(connection);
+  }, []);
 
   const sendSms = async () => {
     let sendSmsTo = [];
@@ -176,13 +196,10 @@ const HomeScreen = () => {
         </View>
         <Button
           onPress={() => {
-            // onChangeIsTracking(false);
-            //OnChangeIsFalling(true);
             OnChangeIsGps(true);
           }}>
           Fall?
         </Button>
-        <GpsSensorScreen />
       </ImageBackground>
     </View>
   );
