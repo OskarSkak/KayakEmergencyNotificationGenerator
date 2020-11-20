@@ -28,7 +28,9 @@ namespace kayakinsights.api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] GPS dto)
         {
-            var result = await _service.Create(dto);
+            // var result = await _service.Create(dto);
+            object result = null;
+            System.Threading.Thread.Sleep(1000);
             return Ok(result);
         }
 

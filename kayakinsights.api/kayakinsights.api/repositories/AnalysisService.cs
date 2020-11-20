@@ -44,8 +44,18 @@ namespace kayakinsights.api.repositories
             while (true)
             {
                 var delayTask = Task.Delay(20000);
-                await hubContext.Clients.All.SendAsync("TEST", "IT WORKS");
+                await hubContext.Clients.All.SendAsync("TEST", new AnalysisResult());
             }
+        }
+
+        private async Task<AnalysisResult> AnalyzeLatestBatch()
+        {
+
+        }
+
+        private async Task<AnalysisResult> AnalyzeBatch(BatchModel batch)
+        {
+
         }
 
         
