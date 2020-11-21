@@ -61,6 +61,19 @@ namespace kayakinsights.api.repositories
         }
         
 
+        private async Task<AnalysisResult> AnalyzeLatestBatch()
+        {
+            var to = DateTime.Today;
+            var from = to.AddSeconds(-45);
+            var batch = await batchService.Get(from, to);
+            return await AnalyzeBatch(batch);
+        }
+
+        private async Task<AnalysisResult> AnalyzeBatch(List<BatchModel> batch)
+        {
+
+        }
+
         
     }
 }

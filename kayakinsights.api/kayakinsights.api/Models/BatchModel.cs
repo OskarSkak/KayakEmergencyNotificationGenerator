@@ -21,5 +21,8 @@ namespace kayakinsights.api.Models
 
         [BsonElement("Power")]
         public double Power { get; set; }
+
+        [BsonElement("TimeStamp")]
+        public DateTime TimeStamp { get; set; }
     }
 }

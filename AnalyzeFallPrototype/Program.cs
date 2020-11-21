@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 
 namespace AnalyzeFallPrototype
 {
@@ -69,22 +70,46 @@ namespace AnalyzeFallPrototype
                     testZ.Add(Double.Parse(Z.ElementAt(i), CultureInfo.InvariantCulture));
                 }
 
-                Console.WriteLine(
-                    "X Fall? " + detectFall(testX, 100) +
-                    "\nY Fall? " + detectFall(testY, 100) +
-                    "\nZ Fall? " + detectFall(testZ, 100)
-                    );
-            }
+                var sumX = 0.0;
+                var sumY = 0.0;
+                var sumZ = 0.0;
 
-            public Boolean detectFall(List<double> values, double threshold)
-            {
-                foreach(var v in values)
+                for (int i = 0; i < testX.Count && i < testY.Count && i < testZ.Count; i++)
                 {
+                    Console.WriteLine(testX[i] + ";"+ testY[i] + ";" + testZ[i]);
+                    sumX += testX[i];
+                    sumY += testY[i];
+                    sumZ += testZ[i];
 
+                    /*if(i == 30)
+                    {
+                        Console.WriteLine("X: " + sumX / i + 1 + "\tY: " + sumY / i + 1 + "\tZ: " + sumZ / i + 1);
+                        sumX = sumY = sumZ = 0;
+                    }
+                    if(i == 60)
+                    {
+                        Console.WriteLine("X: " + sumX / i + 1 + "\tY: " + sumY / i + 1 + "\tZ: " + sumZ / i + 1);
+                        sumX = sumY = sumZ = 0;
+                    }
+                    if (i == 90)
+                    {
+                        Console.WriteLine("X: " + sumX / i + 1 + "\tY: " + sumY / i + 1 + "\tZ: " + sumZ / i + 1);
+                        sumX = sumY = sumZ = 0;
+                    }
+                    if (i == 120)
+                    {
+                        Console.WriteLine("X: " + sumX / i + 1 + "\tY: " + sumY / i + 1 + "\tZ: " + sumZ / i + 1);
+                        sumX = sumY = sumZ = 0;
+                    }
+                    if (i == testX.Count - 1)
+                    {
+                        Console.WriteLine("X: " + sumX / i + 1 + "\tY: " + sumY / i + 1 + "\tZ: " + sumZ / i + 1);
+                        sumX = sumY = sumZ = 0;
+                    }*/
                 }
 
-                return false;
             }
+
         }
 
     }
