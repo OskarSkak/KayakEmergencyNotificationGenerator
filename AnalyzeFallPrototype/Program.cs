@@ -4,12 +4,14 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices.ComTypes;
 
 namespace AnalyzeFallPrototype
 {
     public class Program
     {
+
         public static void Main(string[] args)
         {
             /*var sa = File.ReadAllText("C:\\Users\\skakk\\software_proj\\KayakInsights\\AnalyzeFallPrototype\\sa.json");
@@ -31,6 +33,13 @@ namespace AnalyzeFallPrototype
             List<string> Y = new List<string>();
             List<string> Z = new List<string>();
             double TRESHOLD_VAL = 100;
+            private static readonly int NEEDED_CONFIDENCE_LEVEL = 15;
+            int xConfidence = 0;
+            int yConfidence = 0;
+            int zConfidence = 0;
+            double avg_x = 0;
+            double avg_y = 0;
+            double avg_z = 0;
 
             public void populateLists()
             {
@@ -50,6 +59,7 @@ namespace AnalyzeFallPrototype
                 }
 
                 Console.WriteLine("Succeeded? " + ((timestamps.Count != 0) && (X.Count != 0) && (Y.Count != 0) && (Z.Count != 0) ));
+                
             }
 
             public void testDetection()
@@ -58,12 +68,8 @@ namespace AnalyzeFallPrototype
                 List<double> testY = new List<double>();
                 List<double> testZ = new List<double>();
 
-                for (int i = 0; i < 100; i++)
+                for (int i = 0; i < X.Count || i < Y.Count || i < Z.Count; i++)
                 {
-                    if (i > 100 && i % 100 == 0)
-                    {
-                        break;
-                    }
                         
                     testX.Add(Double.Parse(X.ElementAt(i), CultureInfo.InvariantCulture));
                     testY.Add(Double.Parse(Y.ElementAt(i), CultureInfo.InvariantCulture));
@@ -74,40 +80,56 @@ namespace AnalyzeFallPrototype
                 var sumY = 0.0;
                 var sumZ = 0.0;
 
+
                 for (int i = 0; i < testX.Count && i < testY.Count && i < testZ.Count; i++)
                 {
-                    Console.WriteLine(testX[i] + ";"+ testY[i] + ";" + testZ[i]);
+                    //Console.WriteLine(testX[i] + ";"+ testY[i] + ";" + testZ[i]);
                     sumX += testX[i];
                     sumY += testY[i];
                     sumZ += testZ[i];
+                    
+                    if(i % 30 == 0)
+                    {
+                        xConfidence = DetectFall(i, extractBatch(i, 30, testX)); 
+                        yConfidence = DetectFall(i, extractBatch(i, 30, testY)); 
+                        zConfidence = DetectFall(i, extractBatch(i, 30, testZ));
 
-                    /*if(i == 30)
-                    {
-                        Console.WriteLine("X: " + sumX / i + 1 + "\tY: " + sumY / i + 1 + "\tZ: " + sumZ / i + 1);
-                        sumX = sumY = sumZ = 0;
+                        if (NEEDED_CONFIDENCE_LEVEL <= xConfidence+yConfidence+zConfidence) Console.WriteLine("FALL DETECTED AT i=" + i);
+                        xConfidence = yConfidence = zConfidence = 0;
                     }
-                    if(i == 60)
-                    {
-                        Console.WriteLine("X: " + sumX / i + 1 + "\tY: " + sumY / i + 1 + "\tZ: " + sumZ / i + 1);
-                        sumX = sumY = sumZ = 0;
-                    }
-                    if (i == 90)
-                    {
-                        Console.WriteLine("X: " + sumX / i + 1 + "\tY: " + sumY / i + 1 + "\tZ: " + sumZ / i + 1);
-                        sumX = sumY = sumZ = 0;
-                    }
-                    if (i == 120)
-                    {
-                        Console.WriteLine("X: " + sumX / i + 1 + "\tY: " + sumY / i + 1 + "\tZ: " + sumZ / i + 1);
-                        sumX = sumY = sumZ = 0;
-                    }
-                    if (i == testX.Count - 1)
-                    {
-                        Console.WriteLine("X: " + sumX / i + 1 + "\tY: " + sumY / i + 1 + "\tZ: " + sumZ / i + 1);
-                        sumX = sumY = sumZ = 0;
-                    }*/
+                    
                 }
 
+            }
+
+            private static List<Double> extractBatch(int index, int wantedInterval, List<double> all)
+            {
+                var result = new List<Double>();
+
+                if (!(index + wantedInterval > all.Count - 1))
+                    for (int i = index; i < index + wantedInterval; i++)
+                        result.Add(all[i]);
+                else
+                    for (int i = index; i < index - wantedInterval; i--)
+                        result.Add(all[i]);
+                    
+
+                return result;
+            }
+
+            private static int DetectFall(int i, List<double> batch)
+            {
+                var confidence = 0;
+                var sum = 0.0;
+
+                foreach (var d in batch) sum += d;
+
+                var avg = sum / batch.Count;
+
+                foreach (var d in batch)
+                    if (d > avg + 1 || d < avg - 1)         confidence += 1;
+
+                return confidence;
             }
 
         }
