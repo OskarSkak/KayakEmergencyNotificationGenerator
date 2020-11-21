@@ -28,6 +28,7 @@ namespace kayakinsights.api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] GPS dto)
         {
+            Console.WriteLine();
             var result = await _service.Create(dto);
             return Ok(result);
         }

@@ -36,17 +36,30 @@ namespace kayakinsights.api.repositories
 
         public async Task StartAnalysis()
         {
-            BackgroundJob.Schedule(() => Running(), TimeSpan.FromSeconds(0));
+            // Specify seconds to run and call the App. Currently every 5 sec
+            RecurringJob.AddOrUpdate("1",() => Running(), "*/5 * * * * *");
         }
 
-        public async Task Running()
+        public void Running()
         {
-            while (true)
-            {
-                var delayTask = Task.Delay(20000);
-                await hubContext.Clients.All.SendAsync("TEST", "IT WORKS");
-            }
+            Console.WriteLine("running");
+            hubContext.Clients.All.SendAsync("TEST", false);
+            
         }
+        
+        public async Task StopAnalysis()
+        {
+            // Specify seconds to run and call the App. Currently every 5 sec
+            RecurringJob.RemoveIfExists("1");
+        }
+        
+        public async Task TestFalling()
+        {
+            // Specify seconds to run and call the App. Currently every 5 sec
+            RecurringJob.RemoveIfExists("1");
+            hubContext.Clients.All.SendAsync("TEST", true);
+        }
+        
 
         
     }

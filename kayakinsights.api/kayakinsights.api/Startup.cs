@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using kayakinsights.api.config;
 using kayakinsights.api.context;
 using kayakinsights.api.Hub;
@@ -18,6 +19,8 @@ using Microsoft.OpenApi.Models;
 using Hangfire;
 using Hangfire.MemoryStorage;
 using Hangfire.SqlServer;
+using kayakinsights.api.Models;
+using kayakinsights.api.Models.ModelFromFile;
 
 namespace kayakinsights.api
 {
@@ -44,6 +47,13 @@ namespace kayakinsights.api
             services.AddSingleton<ITodoRepository>(repo);
             */
 
+            var mapperConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new MappingProfile());
+            });
+            IMapper mapper = mapperConfig.CreateMapper();
+            services.AddSingleton(mapper);
+            services.AddScoped<IDataFromFile, DataFromFile>();
             services.AddSignalR();
             services.AddScoped<GPSService>();
             services.AddScoped<BatchService>();
