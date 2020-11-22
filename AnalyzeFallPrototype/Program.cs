@@ -19,46 +19,39 @@ namespace AnalyzeFallPrototype
             int a = 3;
             Console.WriteLine(jsonO.SelectToken("accelerometerSensors"));*/
 
-            var ana = new Analyzation();
+            var ana = new Accelerometer();
             ana.populateLists();
-            ana.testDetection();
+           ana.testDetection();
 
         }
 
         
         public class Analyzation
         {
-            List<string> timestamps = new List<string>();
             List<string> X = new List<string>();
             List<string> Y = new List<string>();
             List<string> Z = new List<string>();
-            double TRESHOLD_VAL = 100;
             private static readonly int NEEDED_CONFIDENCE_LEVEL = 15;
             int xConfidence = 0;
             int yConfidence = 0;
             int zConfidence = 0;
-            double avg_x = 0;
-            double avg_y = 0;
-            double avg_z = 0;
 
             public void populateLists()
             {
                 using (var reader = new StreamReader(@"C:\\Users\\skakk\\software_proj\\KayakInsights\\AnalyzeFallPrototype\\data\\gyroscope_1.csv"))
                 {
-
                     while (!reader.EndOfStream)
                     {
                         var line = reader.ReadLine();
                         var values = line.Split(';');
 
-                        timestamps.Add(values[0]);
                         X.Add(values[1]);
                         Y.Add(values[2]);
                         Z.Add(values[3]);
                     }
                 }
 
-                Console.WriteLine("Succeeded? " + ((timestamps.Count != 0) && (X.Count != 0) && (Y.Count != 0) && (Z.Count != 0) ));
+                Console.WriteLine("Succeeded? " + ((X.Count != 0) && (Y.Count != 0) && (Z.Count != 0) ));
                 
             }
 
