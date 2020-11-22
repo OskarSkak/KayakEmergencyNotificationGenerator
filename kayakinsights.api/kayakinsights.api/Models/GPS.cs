@@ -27,10 +27,10 @@ namespace kayakinsights.api.Models
         public double longitude {get; set;}
 
         [BsonElement("altitudeAccuracy")]
-        public int altitudeAccuracy { get; set; }
+        public double altitudeAccuracy { get; set; }
 
         [BsonElement("accuracy")]
-        public int accuracy { get; set; }
+        public double accuracy { get; set; }
         
 
     }
