@@ -94,7 +94,7 @@ namespace kayakinsights.api
 
             app.UseEndpoints(endpoints => { 
                 endpoints.MapControllers();
-                endpoints.MapHub<SignalRHub>("/apiHub");
+                endpoints.MapHub<SignalRHub>("/api/hub");
             });
         }
     }

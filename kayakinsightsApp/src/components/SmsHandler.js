@@ -2,7 +2,7 @@ import SmsAndroid from 'react-native-get-sms-android';
 import React, {Component} from 'react';
 import {PermissionsAndroid} from 'react-native';
 import getContactsFromAsyncStorage from './AsyncStorage';
-import {apiUrl} from '../../api';
+import {appUrl} from '../../api';
 
 class SmsHandler extends Component {
   constructor(props) {
@@ -45,8 +45,8 @@ class SmsHandler extends Component {
   sendSms = () => {
     if (this.state.permission) {
       SmsAndroid.autoSend(
-        JSON.stringify(res),
-        `${apiUrl + '/test'}`,
+        JSON.stringify(this.state.smsList),
+        `${appUrl}`,
         (fail) => {
           console.log('Failed with this error: ' + fail);
         },

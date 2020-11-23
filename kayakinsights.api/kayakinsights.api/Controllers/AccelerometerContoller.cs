@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace kayakinsights.api.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class AccelerometerController : ControllerBase
     {
 

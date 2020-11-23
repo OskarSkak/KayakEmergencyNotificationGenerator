@@ -47,10 +47,24 @@ class SensorManager extends React.Component {
       this.state.data,
       this.batteryService.current.getBattery(),
     );
+    this.clearStateData();
   };
+
   componentWillUnmount() {
     clearInterval(this.state.sendDataIntervalID);
   }
+
+  clearStateData = () => {
+    this.setState({
+      data: {
+        accelerometer: [],
+        gps: [],
+        gyroscope: [],
+        power: 0,
+        timestamp: new Date(),
+      },
+    });
+  };
 
   addSensorData = ({action, type}) => {
     switch (type) {

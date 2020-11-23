@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace kayakinsights.api.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class GyroscopeController : ControllerBase
     {
         private readonly GyroscopeService _service;

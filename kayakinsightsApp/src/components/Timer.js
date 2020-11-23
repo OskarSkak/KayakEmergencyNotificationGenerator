@@ -3,10 +3,9 @@ import React, {useState, useEffect} from 'react';
 
 const Timer = ({callback}) => {
   const [minutes, setMinutes] = useState(0);
-  const [seconds, setSeconds] = useState(30);
+  const [seconds, setSeconds] = useState(5);
   useEffect(() => {
     let myInterval = setInterval(() => {
-      console.log(seconds);
       if (seconds > 0) {
         setSeconds(seconds - 1);
       }

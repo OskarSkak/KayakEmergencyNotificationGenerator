@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace kayakinsights.api.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class AnalysisController : ControllerBase
     {
         AnalysisService _service;

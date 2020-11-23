@@ -13,9 +13,8 @@ class ApiComponent extends React.Component {
 
   sendData = (data, battery) => {
     data.power = battery;
-    data.timeStamp = +new Date();
-    console.log(data);
-    /* axios
+    data.timeStamp = new Date();
+    axios
       .post(apiUrl + '/Batch', data)
       .then((res) => {
         console.log(res);
@@ -23,7 +22,6 @@ class ApiComponent extends React.Component {
       .catch((err) => {
         console.log(err);
       });
-      */
   };
 
   render() {

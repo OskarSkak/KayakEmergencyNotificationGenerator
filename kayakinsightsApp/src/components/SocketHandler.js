@@ -1,6 +1,6 @@
 import React from 'react';
 import {HubConnectionBuilder, LogLevel} from '@microsoft/signalr';
-import apiUrl from '../../api';
+import {apiUrl} from '../../api';
 
 class SocketHandler extends React.Component {
   constructor(props) {
@@ -14,7 +14,7 @@ class SocketHandler extends React.Component {
   componentDidMount() {
     if (this.props.active) {
       const connection = new HubConnectionBuilder()
-        .withUrl(apiUrl + '/apiHub')
+        .withUrl(apiUrl + '/hub')
         .configureLogging(LogLevel.Error)
         .build();
 
@@ -35,8 +35,8 @@ class SocketHandler extends React.Component {
       });
 
       // Incoming messages will grow the message log array
-      connection.on('TEST', (e, a) => {
-        if (e === true || a === true) {
+      connection.on('TEST', (response, a) => {
+        if (response === true) {
           // The persona has falled!!!
           //CALLBACK
           this.props.fallDetected();

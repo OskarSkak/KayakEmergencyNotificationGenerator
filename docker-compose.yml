@@ -3,14 +3,14 @@ version: "3.7"
 services:
   api:
     build: ./kayakinsights.api/kayakinsights.api
-    ports:
-      - 5011:80
     environment:
       MongoDB_Host: mongo
     depends_on:
       - mongo
     links:
       - mongo
+    ports:
+      - 5011:80
 
   mongo:
     image: mongo
@@ -19,6 +19,13 @@ services:
       - ${WEBAPP_STORAGE_HOME}./si:/data/db/mongo
     ports:
       - "27017:27017"
+
+  spa:
+    build: ./kayakinsightspa
+    depends_on:
+      - api
+    ports:
+      - 80:80
 
   #  mongo-express:
   #    image: mongo-express
@@ -37,6 +44,7 @@ services:
       - 4551:4551
     links:
       - api
+      - spa
     environment:
-      - DOMAIN=api
+      - DOMAIN=spa
       - PORT=80

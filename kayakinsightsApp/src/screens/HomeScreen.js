@@ -46,6 +46,14 @@ class HomeScreen extends React.Component {
 
   fallDetected = () => {
     //this.smsService?.current.sendSms();
+    console.log('detected');
+    this.setState({isFalling: true});
+  };
+
+  sendSms = () => {
+    console.log('sms');
+    this.smsService.current.sendSms();
+    this.setState({isFalling: false});
   };
 
   render() {
@@ -88,19 +96,17 @@ class HomeScreen extends React.Component {
                     marginBottom: 30,
                     fontSize: 15,
                   }}>
-                  <Timer callback={() => sendSms()} />
+                  <Timer callback={() => this.sendSms()} />
                 </Text>
                 <Button
                   style={{marginBottom: 50}}
                   onPress={() => {
+                    this.setState({isFalling: false});
                     //OnChangeIsFalling(false);
                     //clearInterval(myInterval);
                   }}>
                   No, i'm proffesional
                 </Button>
-                <Pressable style={{marginBottom: 50}}>
-                  <Text>Send sms</Text>
-                </Pressable>
               </Card>
             </Modal>
           </View>
@@ -118,10 +124,7 @@ class HomeScreen extends React.Component {
             )*/}
           </View>
         </ImageBackground>
-        <SocketHandler
-          fallDetected={() => this.fallDetected()}
-          active={false}
-        />
+        <SocketHandler fallDetected={() => this.fallDetected()} active={true} />
         <SmsHandler ref={this.smsService} />
         <SensorManager
           ref={this.SensorManager}
