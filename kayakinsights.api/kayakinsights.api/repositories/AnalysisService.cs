@@ -71,7 +71,8 @@ namespace kayakinsights.api.repositories
 
         private async Task<AnalysisResult> AnalyzeBatch(List<BatchModel> batch)
         {
-
+            // Tjek lige her! 
+            return new AnalysisResult();
         }
 
         

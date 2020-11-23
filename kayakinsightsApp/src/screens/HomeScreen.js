@@ -1,209 +1,139 @@
-import React from 'react';
-import {
-  ImageBackground,
-  Pressable,
-  StyleSheet,
-  PermissionsAndroid,
-  View,
-} from 'react-native';
+import React, {useEffect} from 'react';
+import {ImageBackground, Pressable, StyleSheet, View} from 'react-native';
 import GyroScopeScreen from './GyroScopeScreen';
 import {Button, Card, Layout, Modal, Text} from '@ui-kitten/components';
-import Timer from '../components/util';
-import SmsAndroid from 'react-native-get-sms-android';
-import AsyncStorage from '@react-native-community/async-storage';
+import Timer from '../components/Timer';
+
 import GpsSensorScreen from './GpsSensorScreen';
-import signalr from 'react-native-signalr';
-import {HubConnectionBuilder, LogLevel} from '@microsoft/signalr';
-const hub_endpoint = 'http://3d073f890d09.ngrok.io/apiHub';
-const image = {
-  uri:
-    'https://images.unsplash.com/photo-1551679630-2eed87aefae6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80',
-};
+import {log} from 'react-native-reanimated';
+import SocketHandler from '../components/SocketHandler';
+import getContactsFromAsyncStorage from '../components/AsyncStorage';
+import SmsHandler from '../components/SmsHandler';
+import {imageUrl} from '../../api';
+import SensorManager from '../components/SensorManager';
+class HomeScreen extends React.Component {
+  SensorManager = React.createRef();
+  smsService = React.createRef();
+  constructor(props) {
+    super(props);
+    this.state = {
+      isTracking: false,
+      isFalling: false,
+      isGps: false,
+    };
+  }
 
-const HomeScreen = () => {
-  const [isTracking, onChangeIsTracking] = React.useState(false);
-  const [isFalling, OnChangeIsFalling] = React.useState(false);
-  const [isGps, OnChangeIsGps] = React.useState(false);
-  const [visible, setVisible] = React.useState(false);
-  const [isTimeStarted, onChangeIsTimeStarted] = React.useState(false);
-  const initialSeconds = 30;
-  const [seconds, setSeconds] = React.useState(initialSeconds);
+  displayText = () => {
+    return this.state.isTracking ? 'Stop Tracking' : 'Start Tracking';
+  };
 
-  const [user, onChangeUserText] = React.useState('');
-  const [message, onChangeMessageText] = React.useState('');
-  const [conn, setConn] = React.useState(null);
-  const [messageLog, setMessageLog] = React.useState([]);
-  const [connectionState, setConnectedStateText] = React.useState('');
-  const [isConnected, setConnected] = React.useState(false);
-
-  let myInterval = null;
-  const displayText = isTracking ? 'Stop Tracking' : 'Start Tracking';
-
-  React.useEffect(() => {
-    console.log('effect');
-
-    // Setting the log level to Debug will generate tons more diagnostic
-    // messages in the console log which can help give a deeper understanding
-    // of how SignalR works and what it's doing under the covers
-    const connection = new HubConnectionBuilder()
-      .withUrl(hub_endpoint)
-      .configureLogging(LogLevel.Debug)
-      .build();
-
-    setConnectedStateText(`Trying to connect to ${hub_endpoint}`);
-
-    // Try to start the connection
-    connection
-      .start()
-      .then(() => {
-        setConnectedStateText(`Connected to ${hub_endpoint}`);
-        setConnected(true);
-      })
-      .catch((err) =>
-        console.log(`Error starting the connection: ${err.toString()}`),
-      );
-
-    // Handle connection closing
-    connection.onclose(async () => {
-      setConnectedStateText(`Disconnected from ${hub_endpoint}`);
-      setConnected(false);
-    });
-
-    // Incoming messages will grow the message log array
-    connection.on('hub', (e, a) => {
-      if (e === true) {
-        // The persona has falled!!!
-        onChangeIsTracking(false);
-        OnChangeIsFalling(true);
-      } else {
-        console.log('Not falled! ');
-      }
-    });
-
-    // This isn't very elegant but I'm still learning about scope and state in React Native
-    // This seemed like the logical way to make the connection object available to the 'Reconnect' button
-    // but I think the connection object/handler should be encapsulated into it's own component
-    setConn(connection);
-  }, []);
-
-  const sendSms = async () => {
-    let sendSmsTo = [];
-
-    // do your SMS stuff here
-    try {
-      let jsonValue = await AsyncStorage.getItem('@contacts');
-      const value = JSON.parse(jsonValue);
-      value.forEach((element) => {
-        sendSmsTo.push(element.phone);
-      });
-    } catch (err) {
-      console.log(err);
-    }
-    console.log(sendSmsTo);
-
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.SEND_SMS,
-        {
-          title: 'Cool Photo App Camera Permission',
-          message:
-            'Cool Photo App needs access to your camera ' +
-            'so you can take awesome pictures.',
-          buttonNeutral: 'Ask Me Later',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        },
-      );
-
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        SmsAndroid.autoSend(
-          JSON.stringify(sendSmsTo),
-          'WORKING!!',
-          (fail) => {
-            console.log('Failed with this error: ' + fail);
-          },
-          (success) => {
-            console.log('SMS sent successfully');
-          },
-        );
-      } else {
-        console.log('Camera permission denied');
-      }
-    } catch (err) {
-      console.warn(err);
+  startTracking = () => {
+    if (this.state.isTracking) {
+      this.SensorManager.current?.stopSampling();
+      this.SensorManager.current?.stopSendingSampling();
+      this.setState((prevState) => ({
+        isTracking: !prevState.isTracking,
+      }));
+    } else {
+      this.setState((prevState) => ({
+        isTracking: !prevState.isTracking,
+      }));
+      console.log('hej');
+      this.SensorManager.current?.startSampling();
+      this.SensorManager.current?.startSendingSampling();
     }
   };
 
-  const start = () => {
-    myInterval = setInterval(() => {
-      if (seconds > 0) {
-        let second = seconds - 1;
-        setSeconds(second);
-      }
-      if (seconds === 0) {
-        clearInterval(myInterval);
-      }
-    }, 1000);
+  fallDetected = () => {
+    //this.smsService?.current.sendSms();
   };
 
-  return (
-    <View style={styles.container}>
-      <ImageBackground source={image} style={styles.image}>
-        <View style={styles.opacity}>
-          <Pressable
-            onPress={() => {
-              onChangeIsTracking(!isTracking);
-            }}
-            style={styles.button}>
-            {!isTracking ? null : <GyroScopeScreen interval={1000} />}
+  render() {
+    return (
+      <View style={styles.container}>
+        <ImageBackground source={{uri: imageUrl}} style={styles.image}>
+          <View style={styles.opacity}>
+            <Pressable
+              onPress={() => this.startTracking()}
+              style={styles.button}>
+              {/*!this.state.isTracking ? null : (
+                <GyroScopeScreen
+                  callBackAcc={(acc) => console.log(acc)}
+                  callBackGyr={(gyr) => {
+                    console.log(gyr);
+                  }}
+                  interval={3000}
+                />
+                )*/}
 
-            <Text style={styles.text}>{displayText}</Text>
-          </Pressable>
-          <Modal style={{borderRadius: 20, height: 300}} visible={isFalling}>
-            <Card disabled={true}>
-              <Text
-                style={{
-                  textAlign: 'center',
-                  marginHorizontal: 90,
-                  marginBottom: 50,
-                  fontSize: 30,
-                }}>
-                Did you fall?
-              </Text>
-              <Text
-                style={{
-                  textAlign: 'center',
-                  color: 'red',
-                  marginBottom: 30,
-                  fontSize: 15,
-                }}>
-                <Timer callback={() => sendSms()} />
-              </Text>
-              <Button
-                style={{marginBottom: 50}}
-                onPress={() => {
-                  onChangeIsTracking(false);
-                  OnChangeIsFalling(false);
-                  clearInterval(myInterval);
-                }}>
-                No, i'm proffesional{' '}
-              </Button>
-              <Pressable style={{marginBottom: 50}}>
-                <Text>Send sms</Text>
-              </Pressable>
-            </Card>
-          </Modal>
-        </View>
-        <Button
-          onPress={() => {
-            OnChangeIsGps(true);
-          }}>
-          Fall?
-        </Button>
-      </ImageBackground>
-    </View>
-  );
-};
+              <Text style={styles.text}>{this.displayText()}</Text>
+            </Pressable>
+            <Modal
+              style={{borderRadius: 20, height: 300}}
+              visible={this.state.isFalling}>
+              <Card disabled={true}>
+                <Text
+                  style={{
+                    textAlign: 'center',
+                    marginHorizontal: 90,
+                    marginBottom: 50,
+                    fontSize: 30,
+                  }}>
+                  Did you fall?
+                </Text>
+                <Text
+                  style={{
+                    textAlign: 'center',
+                    color: 'red',
+                    marginBottom: 30,
+                    fontSize: 15,
+                  }}>
+                  <Timer callback={() => sendSms()} />
+                </Text>
+                <Button
+                  style={{marginBottom: 50}}
+                  onPress={() => {
+                    //OnChangeIsFalling(false);
+                    //clearInterval(myInterval);
+                  }}>
+                  No, i'm proffesional
+                </Button>
+                <Pressable style={{marginBottom: 50}}>
+                  <Text>Send sms</Text>
+                </Pressable>
+              </Card>
+            </Modal>
+          </View>
+          <Button onPress={() => {}}>Fall?</Button>
+          <View style={{backgroundColor: 'black'}}>
+            {/*this.state.isGps ? (
+              <GpsSensorScreen
+                callBackGps={(gps) => {
+                  console.log(gps);
+                }}
+                seconds={3000}
+              />
+            ) : (
+              <Text>false</Text>
+            )*/}
+          </View>
+        </ImageBackground>
+        <SocketHandler
+          fallDetected={() => this.fallDetected()}
+          active={false}
+        />
+        <SmsHandler ref={this.smsService} />
+        <SensorManager
+          ref={this.SensorManager}
+          enableGyroscope={true}
+          enableAccelerometer={true}
+          enableGps={true}
+          sendingInterval={5000}
+        />
+      </View>
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   container: {

@@ -3,6 +3,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import StackNavigation from './StackNavigation';
 import HomeScreen from '../screens/HomeScreen';
+import {log} from 'react-native-reanimated';
 
 //Creating the navigation type
 const Tab = createBottomTabNavigator();

@@ -1,12 +1,15 @@
 import React, {useState, useEffect} from 'react';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {log} from 'react-native-reanimated';
 import {
-  gyroscope,
+  accelerometer,
   setUpdateIntervalForType,
   SensorTypes,
   L,
 } from 'react-native-sensors';
+const axios = require('axios').default;
 
-class GyroScopeScreen extends React.Component {
+class AccelerometerScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -17,7 +20,7 @@ class GyroScopeScreen extends React.Component {
   }
 
   componentDidMount() {
-    setUpdateIntervalForType(SensorTypes.gyroscope, 1000);
+    setUpdateIntervalForType(SensorTypes.accelerometer, 1000);
   }
 
   componentWillUnmount() {
@@ -25,7 +28,7 @@ class GyroScopeScreen extends React.Component {
   }
 
   setUpdateInterval = (updateInterval) => {
-    setUpdateIntervalForType(SensorTypes.gyroscope, updateInterval);
+    setUpdateIntervalForType(SensorTypes.accelerometer, updateInterval);
   };
 
   startSampling = () => {
@@ -38,10 +41,11 @@ class GyroScopeScreen extends React.Component {
 
   _subscribe = () => {
     this._unsubscribe();
-    const subscription = gyroscope.subscribe((data) => {
+    const subscription = accelerometer.subscribe((data) => {
       let date = new Date(data.timestamp);
       data.timestamp = date;
-      this.props.onRecivedGyroscope(data);
+      //console.log(`ACC: ${data.x}`);
+      this.props.onRecivedAccelerometer(data);
     });
     this.setState({subscription});
   };
@@ -56,4 +60,4 @@ class GyroScopeScreen extends React.Component {
   }
 }
 
-export default GyroScopeScreen;
+export default AccelerometerScreen;

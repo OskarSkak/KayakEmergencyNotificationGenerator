@@ -1,71 +1,72 @@
 import React, {useState, useEffect} from 'react';
-import {PermissionsAndroid} from 'react-native';
-
+import {Button, PermissionsAndroid, Text, View} from 'react-native';
 const axios = require('axios').default;
+import {request, PERMISSIONS} from 'react-native-permissions';
 import Geolocation from 'react-native-geolocation-service';
 
-const GpsSensorScreen = ({callback, interval}) => {
-  const [gpsData, setGpsData] = useState({});
-
-  const mountedRef = React.useRef(true);
-
-  let subscription = null;
-  let watchId = 0;
-
-  const test = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        {
-          title: 'Cool Photo App Camera Permission',
-          message:
-            'Cool Photo App needs access to your camera ' +
-            'so you can take awesome pictures.',
-          buttonNeutral: 'Ask Me Later',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        },
-      );
-
-      console.log(granted);
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log('Starting');
-        watchId = Geolocation.watchPosition(
-          (position) => {
-            console.log(position);
-            console.log('hej');
-          },
-          (error) => {
-            // See error code charts below.
-            console.log(error.code, error.message);
-          },
-          {interval: 1000, fastestInterval: 1000},
-        );
-      } else {
-        console.log('Camera permission denied');
-      }
-    } catch (err) {
-      console.warn(err);
-    }
-  };
-
-  useEffect(() => {
-    _toggle();
-    return () => {
-      Geolocation.clearWatch(watchId);
+class GpsSensorScreen extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      gpsData: [],
+      subscription: null,
     };
-  }, []);
+  }
 
-  const _toggle = async () => {
-    await test();
+  startSampling = () => {
+    this._subscribe();
   };
 
-  const _unsubscribe = () => {
-    subscription && subscription.remove();
-    subscription = null;
+  stopSampling = () => {
+    this._unsubscribe();
   };
 
-  return null;
-};
+  _subscribe = () => {
+    request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION).then((result) => {
+      const intervalForGps = setInterval(() => {
+        this.getGps();
+      }, 1000);
+      this.setState({subscription: intervalForGps});
+    });
+  };
+
+  _unsubscribe = () => {
+    clearInterval(this.state.subscription);
+  };
+
+  getGps = () => {
+    Geolocation.getCurrentPosition(
+      (info) => {
+        let date = new Date(info.timestamp);
+        let data = {
+          timestamp: date,
+          altitude: info.coords.altitude,
+          latitude: info.coords.latitude,
+          longitude: info.coords.longitude,
+          altitudeAccuracy: info.coords.altitudeAccuracy,
+          accuracy: info.coords.accuracy,
+        };
+
+        this.props.onRecivedGps(data);
+      },
+      (err) => console.log(err),
+      {maximumAge: 0, enableHighAccuracy: true, forceRequestLocation: true},
+    );
+  };
+
+  componentDidMount() {}
+
+  requestCameraPermission = () => {
+    PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+    ).then((e) => {
+      console.log(e);
+    });
+  };
+
+  render() {
+    return null;
+  }
+}
 
 export default GpsSensorScreen;
