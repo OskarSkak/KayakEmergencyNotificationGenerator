@@ -7,9 +7,7 @@ class ApiComponent extends React.Component {
     super(props);
   }
 
-  componentDidMount() {
-    console.log('Mounted');
-  }
+  componentDidMount() {}
 
   sendData = (data, battery) => {
     data.power = battery;
@@ -17,7 +15,9 @@ class ApiComponent extends React.Component {
     axios
       .post(apiUrl + '/Batch', data)
       .then((res) => {
-        console.log(res);
+        if (res.status === 200) {
+          console.log('Succesfully sent data');
+        }
       })
       .catch((err) => {
         console.log(err);

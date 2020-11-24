@@ -11,6 +11,7 @@ import getContactsFromAsyncStorage from '../components/AsyncStorage';
 import SmsHandler from '../components/SmsHandler';
 import {imageUrl} from '../../api';
 import SensorManager from '../components/SensorManager';
+import SignalManager from '../components/SignalManager';
 class HomeScreen extends React.Component {
   SensorManager = React.createRef();
   smsService = React.createRef();
@@ -20,6 +21,7 @@ class HomeScreen extends React.Component {
       isTracking: false,
       isFalling: false,
       isGps: false,
+      isInternetReachable: true,
     };
   }
 
@@ -38,7 +40,7 @@ class HomeScreen extends React.Component {
       this.setState((prevState) => ({
         isTracking: !prevState.isTracking,
       }));
-      console.log('hej');
+
       this.SensorManager.current?.startSampling();
       this.SensorManager.current?.startSendingSampling();
     }
@@ -124,6 +126,11 @@ class HomeScreen extends React.Component {
             )*/}
           </View>
         </ImageBackground>
+        <SignalManager
+          badInternetConnection={() => {
+            this.setState({isInternetReachable: false});
+          }}
+        />
         <SocketHandler fallDetected={() => this.fallDetected()} active={true} />
         <SmsHandler ref={this.smsService} />
         <SensorManager
@@ -132,6 +139,8 @@ class HomeScreen extends React.Component {
           enableAccelerometer={true}
           enableGps={true}
           sendingInterval={5000}
+          isInternetReachable={this.state.isInternetReachable}
+          fallDetected={() => this.fallDetected()}
         />
       </View>
     );

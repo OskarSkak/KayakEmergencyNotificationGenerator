@@ -6,6 +6,7 @@ import GpsSensorScreen from '../screens/GpsSensorScreen';
 import GyroScopeScreen from '../screens/GyroScopeScreen';
 import ApiComponent from './ApiComponent';
 import BatteryHandler from './BatteryHandler';
+import FallDetection from './FallDetection';
 
 class SensorManager extends React.Component {
   gyroscope = React.createRef();
@@ -13,6 +14,7 @@ class SensorManager extends React.Component {
   gps = React.createRef();
   apiService = React.createRef();
   batteryService = React.createRef();
+  fallDetectionService = React.createRef();
 
   constructor(props) {
     super(props);
@@ -43,10 +45,15 @@ class SensorManager extends React.Component {
   };
 
   handleData = () => {
-    this.apiService?.current.sendData(
-      this.state.data,
-      this.batteryService.current.getBattery(),
-    );
+    if (this.props.isInternetReachable) {
+      this.apiService?.current.sendData(
+        this.state.data,
+        this.batteryService.current.getBattery(),
+      );
+    } else {
+      const data = this.state.data;
+      this.fallDetectionService.current.detect(data);
+    }
     this.clearStateData();
   };
 
@@ -159,6 +166,10 @@ class SensorManager extends React.Component {
         {this.renderAccelerometer()}
         <BatteryHandler ref={this.batteryService} />
         <ApiComponent ref={this.apiService} />
+        <FallDetection
+          ref={this.fallDetectionService}
+          fallDetected={() => this.props.fallDetected()}
+        />
       </View>
     );
   };
