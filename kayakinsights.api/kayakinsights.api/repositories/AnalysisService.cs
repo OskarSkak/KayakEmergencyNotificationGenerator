@@ -57,7 +57,7 @@ namespace kayakinsights.api.repositories
         {
             // Specify seconds to run and call the App. Currently every 5 sec
             RecurringJob.RemoveIfExists("1");
-            hubContext.Clients.All.SendAsync("TEST", true);
+            await hubContext.Clients.All.SendAsync("TEST", true);
         }
         
 

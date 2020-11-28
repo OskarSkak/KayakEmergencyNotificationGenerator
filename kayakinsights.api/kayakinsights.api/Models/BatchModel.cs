@@ -9,11 +9,18 @@ namespace kayakinsights.api.Models
 {
     public class BatchModel
     {
+
+        public BatchModel()
+        {
+            Accelerometer = new List<Accelerometer>();
+            Gyroscope = new List<Gyroscope>();
+        }
+            
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
         [BsonElement("Accelerometer")]
-        public List<Accelerometer> Accelerometer { get; set; }
+        public List<Accelerometer> Accelerometer{ get; set; }
         [BsonElement("GPS")]
         public List<GPS> GPS { get; set; }
         [BsonElement("Gyroscope")]

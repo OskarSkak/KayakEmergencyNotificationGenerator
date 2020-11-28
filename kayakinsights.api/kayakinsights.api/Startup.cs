@@ -21,6 +21,7 @@ using Hangfire.MemoryStorage;
 using Hangfire.SqlServer;
 using kayakinsights.api.Models;
 using kayakinsights.api.Models.ModelFromFile;
+using kayakinsights.api.lib;
 
 namespace kayakinsights.api
 {
@@ -60,6 +61,8 @@ namespace kayakinsights.api
             services.AddScoped<GyroscopeService>();
             services.AddScoped<AccelerometerServicecs>();
             services.AddScoped<AnalysisService>();
+            services.AddScoped<DataTools>();
+            services.AddScoped<SequentialDataTools>();
             services.AddHangfire(config =>
             {
                 config.UseMemoryStorage();
