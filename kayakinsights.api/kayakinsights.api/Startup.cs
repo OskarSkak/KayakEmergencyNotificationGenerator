@@ -54,7 +54,7 @@ namespace kayakinsights.api
             });
             IMapper mapper = mapperConfig.CreateMapper();
             services.AddSingleton(mapper);
-            services.AddScoped<IDataFromFile, DataFromFile>();
+            services.AddSingleton<IDataFromFile, DataFromFile>();
             services.AddSignalR();
             services.AddScoped<GPSService>();
             services.AddScoped<BatchService>();
@@ -62,7 +62,7 @@ namespace kayakinsights.api
             services.AddScoped<AccelerometerServicecs>();
             services.AddScoped<AnalysisService>();
             services.AddScoped<DataTools>();
-            services.AddScoped<SequentialDataTools>();
+            services.AddSingleton<SequentialDataTools>();
             services.AddHangfire(config =>
             {
                 config.UseMemoryStorage();
