@@ -59,6 +59,7 @@ namespace kayakinsights.api
             services.AddScoped<GPSService>();
             services.AddScoped<BatchService>();
             services.AddScoped<GyroscopeService>();
+            services.AddScoped<FallDetection>();
             services.AddScoped<AccelerometerServicecs>();
             services.AddScoped<AnalysisService>();
             services.AddScoped<DataTools>();

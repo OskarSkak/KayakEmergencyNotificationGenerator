@@ -27,6 +27,7 @@ namespace kayakinsights.api.lib
             _acc = model.Accelerometer.ToList();
             _gyro = model.Gyroscope.ToList();
             this.initSequence();
+            AccInternalCounter = 1000; //To make a fall happen pretty quickly
         }
 
         public BatchModel initSequence()
@@ -75,10 +76,12 @@ namespace kayakinsights.api.lib
             Func<int, int, int, int> getNextIndex = (i, n, m) => i * n / m + n / (2 * m);
 
             for (int i = 0; i < accelerometerBatchSize; i++)
+                if(getNextIndex(i, allAccInInterval.Count, accelerometerBatchSize) < allAccInInterval.Count)
                     model.Accelerometer.Add(allAccInInterval[getNextIndex(i, allAccInInterval.Count, accelerometerBatchSize)]);
 
 
             for (int i = 0; i < gyroscopeBatchSize; i++)
+                if(getNextIndex(i, allGyroInInterval.Count, gyroscopeBatchSize) < allGyroInInterval.Count)
                     model.Gyroscope.Add(allGyroInInterval[getNextIndex(i, allGyroInInterval.Count, gyroscopeBatchSize)]);
 
             this.AccInternalCounter += accIndexesToBeConsumed;

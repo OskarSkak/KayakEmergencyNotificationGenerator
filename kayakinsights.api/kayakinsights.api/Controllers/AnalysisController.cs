@@ -17,14 +17,16 @@ namespace kayakinsights.api.Controllers
         private readonly IDataFromFile _dataFromFile;
         private DataTools _model;
         private SequentialDataTools _sTools;
+        private FallDetection _d;
 
         public AnalysisController(AnalysisService _service , IDataFromFile dataFromFile, DataTools model
-            , SequentialDataTools sTools)
+            , SequentialDataTools sTools, FallDetection d)
         {
             this._service = _service;
             _dataFromFile = dataFromFile;
             _model = model;
             _sTools = sTools;
+            _d = d;
         }
 
         [HttpPost]
@@ -38,9 +40,9 @@ namespace kayakinsights.api.Controllers
             //DataTools.extractNextInterval(180*1000, 40, 40);
 
             var l = _sTools.extractNext(50, 40, 40);
+            var result = _d.analyzeBatch(l);
 
-
-            return Ok();
+            return Ok(result);
         }
         
         [HttpDelete]
