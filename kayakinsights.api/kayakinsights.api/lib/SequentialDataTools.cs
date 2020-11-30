@@ -27,7 +27,7 @@ namespace kayakinsights.api.lib
             _acc = model.Accelerometer.ToList();
             _gyro = model.Gyroscope.ToList();
             this.initSequence();
-            AccInternalCounter = 1000; //To make a fall happen pretty quickly
+            //AccInternalCounter = 1000; //To make a fall happen pretty quickly
         }
 
         public BatchModel initSequence()
