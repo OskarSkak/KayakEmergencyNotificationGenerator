@@ -1,5 +1,6 @@
 ﻿using Hangfire;
 using kayakinsights.api.Hub;
+using kayakinsights.api.lib;
 using kayakinsights.api.Models;
 using Microsoft.AspNetCore.SignalR;
 using System;
@@ -17,14 +18,20 @@ namespace kayakinsights.api.repositories
         private readonly AccelerometerServicecs acService;
         private readonly BatchService batchService;
         private readonly GyroscopeService gyroService;
+        private readonly SequentialDataTools _stools;
+        private readonly FallDetection _det;
         private Timer timer;
+        private readonly HubImpl _hubImpl;
 
         public AnalysisService(
             IHubContext<SignalRHub> hubContext, 
             GPSService gpsService, 
             AccelerometerServicecs acService,
             BatchService batchService,
-            GyroscopeService gyroService
+            GyroscopeService gyroService, 
+            SequentialDataTools stools,
+            FallDetection det,
+            HubImpl hubImpl
             )
         {
             this.hubContext = hubContext;
@@ -32,12 +39,31 @@ namespace kayakinsights.api.repositories
             this.acService = acService;
             this.batchService = batchService;
             this.gyroService = gyroService;
+            this._stools = stools;
+            this._det = det;
+            this._hubImpl = hubImpl;
         }
 
         public async Task StartAnalysis()
         {
             // Specify seconds to run and call the App. Currently every 5 sec
             RecurringJob.AddOrUpdate("1",() => Running(), "*/5 * * * * *");
+        }
+
+        public void testBatch(BatchModel batch)
+        {
+            var interval = (int) getIntervalInSeconds(batch);
+            var data = _stools.extractNext(interval, batch.Accelerometer.Count, batch.Gyroscope.Count);
+            var det_res = _det.analyzeBatch(data);
+            if (det_res.IsFallen)       this._hubImpl.SendMessage(det_res);
+        }
+
+        private double getIntervalInSeconds(BatchModel model)
+        {
+            var first = model.Accelerometer.First().stamp;
+            var last = model.Accelerometer.Last().stamp;
+            var span = last - first;
+            return span.TotalSeconds;
         }
 
         public void Running()

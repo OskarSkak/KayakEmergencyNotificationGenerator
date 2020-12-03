@@ -64,6 +64,7 @@ namespace kayakinsights.api
             services.AddScoped<AnalysisService>();
             services.AddScoped<DataTools>();
             services.AddSingleton<SequentialDataTools>();
+            services.AddScoped<HubImpl>();
             services.AddHangfire(config =>
             {
                 config.UseMemoryStorage();
