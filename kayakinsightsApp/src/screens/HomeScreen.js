@@ -130,6 +130,9 @@ class HomeScreen extends React.Component {
           badInternetConnection={() => {
             this.setState({isInternetReachable: false});
           }}
+          goodInternetConnection={() => {
+            this.setState({isInternetReachable: true});
+          }}
         />
         <SocketHandler fallDetected={() => this.fallDetected()} active={true} />
         <SmsHandler ref={this.smsService} />
