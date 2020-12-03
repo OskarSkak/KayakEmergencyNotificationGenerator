@@ -11,6 +11,9 @@ class SignalManager extends React.Component {
 
   componentDidMount() {
     const unsubscribe = NetInfo.addEventListener((state) => {
+      if (state.details.cellularGeneration === '3g' || state.details.cellularGeneration === '4g' || state.isInternetReachable === true) {
+        this.props.goodInternetConnection();
+      }
       if (state.details.cellularGeneration === '2g') {
         this.props.badInternetConnection();
       }
