@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using kayakinsights.api.lib;
 using kayakinsights.api.Models;
 using kayakinsights.api.repositories;
 using Microsoft.AspNetCore.Builder;
@@ -14,11 +15,21 @@ namespace kayakinsights.api.Controllers
     public class BatchController : ControllerBase
     {
 
-        private readonly BatchService _service;
+        private static readonly string RECEIVED_RESPONSE = "Batch Received"; 
 
-        public BatchController(BatchService gpsService)
+        private readonly BatchService _service;
+        private readonly SequentialDataTools _stools;
+        private readonly AnalysisService _det;
+
+        public BatchController(
+            BatchService gpsService, 
+            SequentialDataTools stools,
+            AnalysisService det
+            )
         {
             this._service = gpsService;
+            this._stools = stools;
+            this._det = det;
         }
 
         [HttpGet]
@@ -28,10 +39,11 @@ namespace kayakinsights.api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] BatchModel dto)
+        public async Task<IActionResult> AnalyzeBatch([FromBody] BatchModel dto)
         {
-            var result = await _service.Create(dto);
-            return Ok(result);
+            var db_res = _service.Create(dto); //dont really want this one to take a long time -> dont really care to much about db integrity
+            _det.testBatch(dto);
+            return Ok(RECEIVED_RESPONSE);
         }
 
     }

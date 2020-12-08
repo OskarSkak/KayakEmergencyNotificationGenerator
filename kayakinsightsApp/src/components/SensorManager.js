@@ -30,13 +30,15 @@ class SensorManager extends React.Component {
         timestamp: new Date(),
       },
       sendDataIntervalID: null,
+      intervalMultiplicator: 1,
+      powerSaving: false,
     };
   }
 
   startSendingSampling = () => {
     const id = setInterval(() => {
       this.handleData();
-    }, this.props.sendingInterval);
+    }, this.state.intervalMultiplicator*this.props.sendingInterval);
     this.setState({sendDataIntervalID: id});
   };
 
@@ -45,16 +47,22 @@ class SensorManager extends React.Component {
   };
 
   handleData = () => {
+    var batteryLevel = this.batteryService.current.getBattery()
     if (this.props.isInternetReachable) {
-      if (this.props.enableApiCommunication) {
-        this.apiService?.current.sendData(
-          this.state.data,
-          this.batteryService.current.getBattery(),
-        );
-      }
+      this.apiService?.current.sendData(
+        this.state.data,
+        batteryLevel,
+      );
+      console.log("Good connection => online detection")
     } else {
       const data = this.state.data;
       this.fallDetectionService.current.detect(data);
+    }
+    if (batteryLevel >= 0.89 && !this.state.powerSaving){
+      console.log("Low battery level : increase API calls interval")
+      this.stopSendingSampling();
+      this.setState({intervalMultiplicator: 2,powerSaving: true});
+      this.startSendingSampling();
     }
     this.clearStateData();
   };

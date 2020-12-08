@@ -37,6 +37,7 @@ namespace kayakinsights.api.repositories
         public async Task<BatchModel> Create(BatchModel s)
         {
             await _context.InsertOneAsync(s);
+
             return s;
         }
     }

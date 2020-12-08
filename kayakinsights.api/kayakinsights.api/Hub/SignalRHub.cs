@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace kayakinsights.api.Hub
 {
-    public class SignalRHub : Microsoft.AspNetCore.SignalR.Hub
+    public class SignalRHub : Microsoft.AspNetCore.SignalR.Hub, HubImpl
     {
         /*public async Task SendMessage(string message)
         {
@@ -18,5 +18,10 @@ namespace kayakinsights.api.Hub
         {
             await Clients.All.SendAsync("Analysis result" , res);
         }
+    }
+
+    public interface HubImpl
+    {
+        public Task SendMessage(AnalysisResult res);
     }
 }
