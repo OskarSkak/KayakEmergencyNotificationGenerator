@@ -25,10 +25,8 @@ namespace kayakinsights.api.Models
         public List<GPS> GPS { get; set; }
         [BsonElement("Gyroscope")]
         public List<Gyroscope> Gyroscope { get; set; }
-
         [BsonElement("Power")]
         public double Power { get; set; }
-
         [BsonElement("TimeStamp")]
         public DateTime TimeStamp { get; set; }
     }

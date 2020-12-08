@@ -53,8 +53,8 @@ namespace kayakinsights.api.repositories
         public void testBatch(BatchModel batch)
         {
             var interval = (int) getIntervalInSeconds(batch);
-            var data = _stools.extractNext(interval, batch.Accelerometer.Count, batch.Gyroscope.Count);
-            var det_res = _det.analyzeBatch(data);
+            //var data = _stools.extractNext(interval, batch.Accelerometer.Count, batch.Gyroscope.Count);
+            var det_res = _det.analyzeBatch(batch);
             if (det_res.IsFallen)       this._hubImpl.SendMessage(det_res);
         }
 
