@@ -134,6 +134,7 @@ class SensorManager extends React.Component {
     if (this.props?.enableGyroscope) {
       return (
         <GyroScopeScreen
+          interval={1000}
           ref={this.gyroscope}
           onRecivedGyroscope={(data) =>
             this.addSensorData({type: 'GYROSCOPE', action: {data}})
@@ -147,6 +148,7 @@ class SensorManager extends React.Component {
     if (this.props.enableAccelerometer) {
       return (
         <AccelerometerScreen
+          interval={1000}
           ref={this.accelerometer}
           onRecivedAccelerometer={(data) =>
             this.addSensorData({type: 'ACCELEROMETER', action: {data}})
@@ -159,6 +161,7 @@ class SensorManager extends React.Component {
     if (this.props.enableGps) {
       return (
         <GpsSensorScreen
+          interval={1000}
           ref={this.gps}
           onRecivedGps={(data) =>
             this.addSensorData({type: 'GPS', action: {data}})

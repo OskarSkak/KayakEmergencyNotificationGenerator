@@ -17,7 +17,7 @@ class GyroScopeScreen extends React.Component {
   }
 
   componentDidMount() {
-    setUpdateIntervalForType(SensorTypes.gyroscope, 1000);
+    setUpdateIntervalForType(SensorTypes.gyroscope, this.props.interval);
   }
 
   componentWillUnmount() {

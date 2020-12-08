@@ -137,6 +137,7 @@ class HomeScreen extends React.Component {
         <SocketHandler fallDetected={() => this.fallDetected()} active={true} />
         <SmsHandler ref={this.smsService} />
         <SensorManager
+          enableApiCommunication={false}
           ref={this.SensorManager}
           enableGyroscope={true}
           enableAccelerometer={true}
