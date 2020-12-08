@@ -13,10 +13,12 @@ namespace kayakinsights.api.Hub
         {
             await Clients.All.SendAsync("ReceiveMessage", message);
         }*/
+        
 
         public async Task SendMessage(AnalysisResult res)
         {
-            await Clients.All.SendAsync("Analysis result" , res);
+            Console.WriteLine("Sending!!");
+            Clients.All.SendAsync("Analysis" , res);
         }
     }
 

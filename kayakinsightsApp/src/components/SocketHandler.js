@@ -34,9 +34,8 @@ class SocketHandler extends React.Component {
         this.setState({isConnected: false});
       });
 
-      // Incoming messages will grow the message log array
-      connection.on('TEST', (response, a) => {
-        if (response === true) {
+      connection.on('Analysis', (response, a) => {
+        if (response) {
           // The persona has falled!!!
           //CALLBACK
           this.props.fallDetected();
