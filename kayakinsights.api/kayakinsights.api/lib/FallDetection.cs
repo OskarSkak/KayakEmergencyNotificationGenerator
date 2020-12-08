@@ -26,10 +26,11 @@ namespace kayakinsights.api.lib
                 IsFallen = false
             };
 
-            var nAcc = getNumberOfAcc(model);
-            var nGyro = getNumberOfGyro(model);
-            var timeSpan = getIntervalInSeconds(model);
-            var batch = _tools.extractNext((int)timeSpan, nAcc, nGyro);
+            /* var nAcc = getNumberOfAcc(model);
+             var nGyro = getNumberOfGyro(model);
+             var timeSpan = getIntervalInSeconds(model);
+             var batch = _tools.extractNext((int)timeSpan, nAcc, nGyro);*/
+            var batch = model;
 
             var ax = new List<double>();
             var ay = new List<double>();
