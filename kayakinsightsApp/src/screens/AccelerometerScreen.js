@@ -20,7 +20,7 @@ class AccelerometerScreen extends React.Component {
   }
 
   componentDidMount() {
-    setUpdateIntervalForType(SensorTypes.accelerometer, 1000);
+    setUpdateIntervalForType(SensorTypes.accelerometer, this.props.interval);
   }
 
   componentWillUnmount() {

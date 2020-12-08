@@ -46,10 +46,12 @@ class SensorManager extends React.Component {
 
   handleData = () => {
     if (this.props.isInternetReachable) {
-      this.apiService?.current.sendData(
-        this.state.data,
-        this.batteryService.current.getBattery(),
-      );
+      if (this.props.enableApiCommunication) {
+        this.apiService?.current.sendData(
+          this.state.data,
+          this.batteryService.current.getBattery(),
+        );
+      }
     } else {
       const data = this.state.data;
       this.fallDetectionService.current.detect(data);
@@ -124,6 +126,7 @@ class SensorManager extends React.Component {
     if (this.props?.enableGyroscope) {
       return (
         <GyroScopeScreen
+          interval={1000}
           ref={this.gyroscope}
           onRecivedGyroscope={(data) =>
             this.addSensorData({type: 'GYROSCOPE', action: {data}})
@@ -137,6 +140,7 @@ class SensorManager extends React.Component {
     if (this.props.enableAccelerometer) {
       return (
         <AccelerometerScreen
+          interval={1000}
           ref={this.accelerometer}
           onRecivedAccelerometer={(data) =>
             this.addSensorData({type: 'ACCELEROMETER', action: {data}})
@@ -149,6 +153,7 @@ class SensorManager extends React.Component {
     if (this.props.enableGps) {
       return (
         <GpsSensorScreen
+          interval={1000}
           ref={this.gps}
           onRecivedGps={(data) =>
             this.addSensorData({type: 'GPS', action: {data}})

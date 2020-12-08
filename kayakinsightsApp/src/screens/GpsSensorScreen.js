@@ -25,7 +25,7 @@ class GpsSensorScreen extends React.Component {
     request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION).then((result) => {
       const intervalForGps = setInterval(() => {
         this.getGps();
-      }, 1000);
+      }, this.props.interval);
       this.setState({subscription: intervalForGps});
     });
   };

@@ -8,6 +8,7 @@ class FallDetection extends React.Component {
   componentDidMount() {}
 
   detect(data) {
+      
     this.props.fallDetected();
   }
 
