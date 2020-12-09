@@ -8,7 +8,6 @@ class FallDetection extends React.Component {
   componentDidMount() {}
 
   detect(data) {
-    console.log("Bad connection => local detection running")
     var THRESHOLD_VAL_PER_ITEM = 0.4;
     var ax = [];
     var ay = [];

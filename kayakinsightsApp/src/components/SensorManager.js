@@ -15,6 +15,13 @@ class SensorManager extends React.Component {
   apiService = React.createRef();
   batteryService = React.createRef();
   fallDetectionService = React.createRef();
+  permanentData = {
+    accelerometer: [],
+    gps: [],
+    gyroscope: [],
+    timestamp: null,
+  } 
+  batteryLevel = null
 
   constructor(props) {
     super(props);
@@ -30,7 +37,7 @@ class SensorManager extends React.Component {
         timestamp: new Date(),
       },
       sendDataIntervalID: null,
-      intervalMultiplicator: 1,
+      intervalMultiplicator: 0.5,
       powerSaving: false,
     };
   }
@@ -47,15 +54,46 @@ class SensorManager extends React.Component {
   };
 
   handleData = () => {
-    var batteryLevel = this.batteryService.current.getBattery();
-    if (this.props.isInternetReachable) {
-      this.apiService?.current.sendData(this.state.data, batteryLevel);
+    this.batteryLevel = this.batteryService.current.getBattery();
+    if (this.props.isInternetReachable && this.batteryLevel < 0.60) {
+      this.apiService?.current.sendData(this.state.data, this.batteryLevel);
       console.log('Good connection => online detection');
     } else {
+      if (!this.props.isInternetReachable)
+      {
+        console.log("Bad connection => local detection running")
+      } else if (this.batteryLevel >= 0.60){
+        console.log('Battery above 60% => local processing for performance');
+      }
       const data = this.state.data;
       this.fallDetectionService.current.detect(data);
+      if (this.permanentData.timestamp === null)
+      {
+        this.permanentData.timestamp = data.timestamp;
+      }
+      for (const i in data.accelerometer){
+        this.permanentData = {
+          ...this.permanentData,
+          accelerometer: [...this.permanentData.accelerometer, data.accelerometer[i]]
+        }
+      }
+      for (const i in data.gps){
+        this.permanentData = {
+          ...this.permanentData,
+          gps: [...this.permanentData.gps, data.gps[i]]
+        }
+      }
+      for (const i in data.gyroscope){
+        this.permanentData = {
+          ...this.permanentData,
+          gyroscope: [...this.permanentData.gyroscope, data.gyroscope[i]]
+        }
+      }
+      console.log("################ PERMANENT ############")
+      var str = JSON.stringify(this.permanentData, null, 4); // (Optional) beautiful indented output.
+      console.log(str); 
     }
-    if (batteryLevel >= 0.89 && !this.state.powerSaving) {
+    if (this.batteryLevel <= 0.15 && !this.state.powerSaving) {
       console.log('Low battery level : increase API calls interval');
       this.stopSendingSampling();
       this.setState({intervalMultiplicator: 2, powerSaving: true});
@@ -123,6 +161,7 @@ class SensorManager extends React.Component {
     if (this.gyroscope.current) this.gyroscope.current.stopSampling();
     if (this.accelerometer.current) this.accelerometer.current.stopSampling();
     if (this.gps.current) this.gps.current.stopSampling();
+    this.apiService?.current.sendFinalData(this.permanentData, this.batteryLevel);
   };
 
   fallDetected = () => {};

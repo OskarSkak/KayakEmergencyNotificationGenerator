@@ -24,6 +24,21 @@ class ApiComponent extends React.Component {
       });
   };
 
+  sendFinalData = (data, battery) => {
+    data.power = battery;
+    data.timeStamp = new Date();
+    axios
+      .post(apiUrl + '/Batch/Final', data)
+      .then((res) => {
+        if (res.status === 200) {
+          console.log('Succesfully sent data');
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   render() {
     return null;
   }
