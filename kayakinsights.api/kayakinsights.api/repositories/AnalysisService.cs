@@ -52,12 +52,10 @@ namespace kayakinsights.api.repositories
 
         public void testBatch(BatchModel batch)
         {
-            Console.WriteLine("TEsting");
             var interval = (int) getIntervalInSeconds(batch);
             //var data = _stools.extractNext(interval, batch.Accelerometer.Count, batch.Gyroscope.Count);
             var det_res = _det.analyzeBatch(batch);
-            this.hubContext.Clients.All.SendAsync("Analysis", det_res);
-            this._hubImpl.SendMessage(det_res);
+            if (det_res.IsFallen) hubContext.Clients.All.SendAsync("Analysis", det_res);
         }
 
         private double getIntervalInSeconds(BatchModel model)

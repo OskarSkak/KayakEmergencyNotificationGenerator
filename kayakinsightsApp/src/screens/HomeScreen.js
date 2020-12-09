@@ -112,7 +112,7 @@ class HomeScreen extends React.Component {
               </Card>
             </Modal>
           </View>
-          <Button onPress={() => {}}>Fall?</Button>
+
           <View style={{backgroundColor: 'black'}}>
             {/*this.state.isGps ? (
               <GpsSensorScreen
@@ -142,7 +142,7 @@ class HomeScreen extends React.Component {
           enableGyroscope={true}
           enableAccelerometer={true}
           enableGps={true}
-          sendingInterval={5000}
+          sendingInterval={10000}
           isInternetReachable={this.state.isInternetReachable}
           fallDetected={() => this.fallDetected()}
         />

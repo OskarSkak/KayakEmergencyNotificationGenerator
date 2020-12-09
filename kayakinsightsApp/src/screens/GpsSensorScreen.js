@@ -49,7 +49,7 @@ class GpsSensorScreen extends React.Component {
 
         this.props.onRecivedGps(data);
       },
-      (err) => console.log(err),
+      (err) => {},
       {maximumAge: 0, enableHighAccuracy: true, forceRequestLocation: true},
     );
   };

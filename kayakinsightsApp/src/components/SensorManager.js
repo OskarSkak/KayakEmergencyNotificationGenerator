@@ -38,7 +38,7 @@ class SensorManager extends React.Component {
   startSendingSampling = () => {
     const id = setInterval(() => {
       this.handleData();
-    }, this.state.intervalMultiplicator*this.props.sendingInterval);
+    }, this.state.intervalMultiplicator * this.props.sendingInterval);
     this.setState({sendDataIntervalID: id});
   };
 
@@ -47,21 +47,18 @@ class SensorManager extends React.Component {
   };
 
   handleData = () => {
-    var batteryLevel = this.batteryService.current.getBattery()
+    var batteryLevel = this.batteryService.current.getBattery();
     if (this.props.isInternetReachable) {
-      this.apiService?.current.sendData(
-        this.state.data,
-        batteryLevel,
-      );
-      console.log("Good connection => online detection")
+      this.apiService?.current.sendData(this.state.data, batteryLevel);
+      console.log('Good connection => online detection');
     } else {
       const data = this.state.data;
       this.fallDetectionService.current.detect(data);
     }
-    if (batteryLevel >= 0.89 && !this.state.powerSaving){
-      console.log("Low battery level : increase API calls interval")
+    if (batteryLevel >= 0.89 && !this.state.powerSaving) {
+      console.log('Low battery level : increase API calls interval');
       this.stopSendingSampling();
-      this.setState({intervalMultiplicator: 2,powerSaving: true});
+      this.setState({intervalMultiplicator: 2, powerSaving: true});
       this.startSendingSampling();
     }
     this.clearStateData();
@@ -134,7 +131,7 @@ class SensorManager extends React.Component {
     if (this.props?.enableGyroscope) {
       return (
         <GyroScopeScreen
-          interval={1000}
+          interval={100}
           ref={this.gyroscope}
           onRecivedGyroscope={(data) =>
             this.addSensorData({type: 'GYROSCOPE', action: {data}})
@@ -148,7 +145,7 @@ class SensorManager extends React.Component {
     if (this.props.enableAccelerometer) {
       return (
         <AccelerometerScreen
-          interval={1000}
+          interval={100}
           ref={this.accelerometer}
           onRecivedAccelerometer={(data) =>
             this.addSensorData({type: 'ACCELEROMETER', action: {data}})
@@ -161,7 +158,7 @@ class SensorManager extends React.Component {
     if (this.props.enableGps) {
       return (
         <GpsSensorScreen
-          interval={1000}
+          interval={100}
           ref={this.gps}
           onRecivedGps={(data) =>
             this.addSensorData({type: 'GPS', action: {data}})

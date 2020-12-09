@@ -17,8 +17,8 @@ namespace kayakinsights.api.Hub
 
         public async Task SendMessage(AnalysisResult res)
         {
-            Console.WriteLine("Sending!!");
-            Clients.All.SendAsync("Analysis" , res);
+            
+            await Clients.All.SendAsync("Analysis" , res);
         }
     }
 

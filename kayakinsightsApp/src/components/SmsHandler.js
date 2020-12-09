@@ -44,6 +44,7 @@ class SmsHandler extends Component {
 
   sendSms = () => {
     if (this.state.permission) {
+      console.log('Sending sms to ' + this.state.smsList);
       SmsAndroid.autoSend(
         JSON.stringify(this.state.smsList),
         `${appUrl}`,
