@@ -24,6 +24,7 @@ class HomeScreen extends React.Component {
       isInternetReachable: true,
       lowEnergy: false,
       lowConnection: false,
+      wifi: false,
     };
   }
 
@@ -161,10 +162,13 @@ class HomeScreen extends React.Component {
         </ImageBackground>
         <SignalManager
           badInternetConnection={() => {
-            this.setState({isInternetReachable: false});
+            this.setState({isInternetReachable: false,wifi: false});
           }}
           goodInternetConnection={() => {
-            this.setState({isInternetReachable: true});
+            this.setState({isInternetReachable: true,wifi: false});
+          }}
+          wifiConnected={()=> {
+            this.setState({wifi: true})
           }}
         />
         <SocketHandler fallDetected={() => this.fallDetected()} active={true} />
@@ -179,6 +183,7 @@ class HomeScreen extends React.Component {
           enableGps={true}
           sendingInterval={30000}
           isInternetReachable={this.state.isInternetReachable}
+          isWifiConnected={this.state.wifi}
           fallDetected={() => this.fallDetected()}
         />
       </View>

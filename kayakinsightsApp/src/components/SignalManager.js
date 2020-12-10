@@ -20,6 +20,9 @@ class SignalManager extends React.Component {
       if (state.isInternetReachable === false) {
         this.props.badInternetConnection();
       }
+      if (state.type === 'wifi' && state.isInternetReachable === true){
+        this.props.wifiConnected();
+      }
     });
     this.setState({subscription: unsubscribe});
   }

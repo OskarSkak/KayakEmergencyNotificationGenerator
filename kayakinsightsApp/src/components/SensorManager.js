@@ -15,6 +15,7 @@ class SensorManager extends React.Component {
   apiService = React.createRef();
   batteryService = React.createRef();
   fallDetectionService = React.createRef();
+  tracking = false;
   permanentData = {
     accelerometer: [],
     gps: [],
@@ -41,6 +42,7 @@ class SensorManager extends React.Component {
       powerSaving: false,
       sendingInterval: 1000,
       sensorSampling: 100,
+      pluggedIn : false,
     };
   }
 
@@ -148,10 +150,7 @@ class SensorManager extends React.Component {
     // apply low energy tactics
     // higher interval
     // higher sending timer
-    // processing internal
-    console.log('############# low Energy & Bad connection #############');
-    console.log('Turning on tactics');
-    console.log('- Processing locally');
+    // processing internalupdateBatteryLevel
     console.log('- higher sensor sampling');
     console.log('- higher batch sampling');
     this.setState({sensorSampling: 1500});
@@ -225,6 +224,7 @@ class SensorManager extends React.Component {
 
   startSampling = () => {
     console.info('Starting sampling...');
+    this.tracking = true;
     if (this.gps.current) this.gps.current.startSampling();
     if (this.gyroscope.current) this.gyroscope.current.startSampling();
     if (this.accelerometer.current) this.accelerometer.current.startSampling();
@@ -235,10 +235,16 @@ class SensorManager extends React.Component {
     if (this.gyroscope.current) this.gyroscope.current.stopSampling();
     if (this.accelerometer.current) this.accelerometer.current.stopSampling();
     if (this.gps.current) this.gps.current.stopSampling();
-    this.apiService?.current.sendFinalData(
-      this.permanentData,
-      this.batteryLevel,
-    );
+    var boolCharge = this.batteryService.current.getPlugSTate() === "charging"
+    this.tracking = false;
+    console.log("Wifi : " + this.props.isWifiConnected + " tracking : " + this.tracking + " battery : " + boolCharge)
+    if (this.props.isWifiConnected && this.tracking === false && boolCharge){
+      console.log("Final batch has been sent")
+      this.apiService?.current.sendFinalData(
+        this.permanentData,
+        this.batteryLevel,
+      );
+    }
   };
 
   fallDetected = () => {};
@@ -290,7 +296,7 @@ class SensorManager extends React.Component {
         {this.renderGPS()}
         {this.renderGyroScope()}
         {this.renderAccelerometer()}
-        <BatteryHandler ref={this.batteryService} />
+        <BatteryHandler ref={this.batteryService}/>
         <ApiComponent ref={this.apiService} />
         <FallDetection
           ref={this.fallDetectionService}
