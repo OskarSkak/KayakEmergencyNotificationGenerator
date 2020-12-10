@@ -10,6 +10,7 @@ class ApiComponent extends React.Component {
   componentDidMount() {}
 
   sendData = (data, battery) => {
+    console.log('Sending...');
     data.power = battery;
     data.timeStamp = new Date();
     axios
@@ -28,7 +29,7 @@ class ApiComponent extends React.Component {
     data.power = battery;
     data.timeStamp = new Date();
     axios
-      .post(apiUrl + '/Batch/Final', data)
+      .post(apiUrl + '/Batch', data)
       .then((res) => {
         if (res.status === 200) {
           console.log('Succesfully sent data');

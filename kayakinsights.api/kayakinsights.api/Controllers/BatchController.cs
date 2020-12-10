@@ -42,8 +42,9 @@ namespace kayakinsights.api.Controllers
         public async Task<IActionResult> AnalyzeBatch([FromBody] BatchModel dto)
         {
             
-            var db_res = _service.Create(dto); //dont really want this one to take a long time -> dont really care to much about db integrity
+            var db_res = await _service.Create(dto); //dont really want this one to take a long time -> dont really care to much about db integrity
             _det.testBatch(dto);
+            Console.WriteLine(db_res);
             return Ok(RECEIVED_RESPONSE);
         }
 

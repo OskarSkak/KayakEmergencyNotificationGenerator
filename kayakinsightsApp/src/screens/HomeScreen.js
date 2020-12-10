@@ -22,6 +22,8 @@ class HomeScreen extends React.Component {
       isFalling: false,
       isGps: false,
       isInternetReachable: true,
+      lowEnergy: false,
+      lowConnection: false,
     };
   }
 
@@ -100,6 +102,7 @@ class HomeScreen extends React.Component {
                   }}>
                   <Timer callback={() => this.sendSms()} />
                 </Text>
+
                 <Button
                   style={{marginBottom: 50}}
                   onPress={() => {
@@ -111,6 +114,36 @@ class HomeScreen extends React.Component {
                 </Button>
               </Card>
             </Modal>
+            <Button
+              onPress={() => {
+                console.log(
+                  `############# Connection is low: ${this.state.lowConnection} `,
+                );
+                this.setState((prevState, props) => ({
+                  lowConnection: !prevState.lowConnection,
+                }));
+              }}>
+              Connection tactic
+            </Button>
+            <Button
+              onPress={() => {
+                console.log(
+                  `############# Battery is low: ${this.state.lowConnection} `,
+                );
+                this.setState((prevState, props) => ({
+                  lowEnergy: !prevState.lowEnergy,
+                }));
+              }}>
+              Connection low energy
+            </Button>
+
+            <Text style={{color: 'white'}}>tactics applied</Text>
+            <Text style={{color: 'white'}}>
+              Battery: {this.state.lowEnergy.toString()}
+            </Text>
+            <Text style={{color: 'white'}}>
+              Connection: {this.state.lowConnection.toString()}
+            </Text>
           </View>
 
           <View style={{backgroundColor: 'black'}}>
@@ -137,12 +170,14 @@ class HomeScreen extends React.Component {
         <SocketHandler fallDetected={() => this.fallDetected()} active={true} />
         <SmsHandler ref={this.smsService} />
         <SensorManager
+          lowConnection={this.state.lowConnection}
+          lowEnergy={this.state.lowEnergy}
           enableApiCommunication={false}
           ref={this.SensorManager}
           enableGyroscope={true}
           enableAccelerometer={true}
           enableGps={true}
-          sendingInterval={10000}
+          sendingInterval={30000}
           isInternetReachable={this.state.isInternetReachable}
           fallDetected={() => this.fallDetected()}
         />
