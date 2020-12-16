@@ -345,3 +345,6 @@ kayakinsights/.expo/web/cache/development/babel-loader
 kayakinsights.api/.vs
 AnalyzeFallPrototype/.vs
 AnalyzeFallPrototype/obj
+Data_collection_prototype/KayakFieldTesting/.idea
+Data_collection_prototype/KayakFieldTesting.API/.idea
+Data_collection_prototype/KayakFieldTesting.API/KayakFieldTesting.API/obj

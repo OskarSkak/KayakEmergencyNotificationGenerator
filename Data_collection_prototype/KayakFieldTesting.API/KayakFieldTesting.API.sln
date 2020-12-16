@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KayakFieldTesting.API", "KayakFieldTesting.API\KayakFieldTesting.API.csproj", "{76BE3513-C50F-4265-AB2D-753C28DC3B30}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{76BE3513-C50F-4265-AB2D-753C28DC3B30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76BE3513-C50F-4265-AB2D-753C28DC3B30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76BE3513-C50F-4265-AB2D-753C28DC3B30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76BE3513-C50F-4265-AB2D-753C28DC3B30}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
